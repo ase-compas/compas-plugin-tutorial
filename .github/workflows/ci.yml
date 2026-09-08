@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Only the deploy job writes, and only to the gh-pages branch.
+permissions:
+  contents: read
+
+# A newer push to main supersedes an in-flight one; queue rather than cancel,
+# so a deployment is never interrupted half way.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm test
+
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plugins
+          path: dist
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Publish to gh-pages
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write 
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: plugins
+          path: dist
+
+      - name: Force-push dist/ to gh-pages
+        working-directory: dist
+        run: |
+          touch .nojekyll   # serve the files as they are, do not run Jekyll
+          git init --quiet --initial-branch gh-pages
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git commit --quiet --message "Build plugins from ${GITHUB_SHA::7}"
+          git push --force \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        run: |
+          echo "Plugins published to <https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/>" >> "$GITHUB_STEP_SUMMARY"

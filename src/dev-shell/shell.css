@@ -1,0 +1,133 @@
+:root {
+  --md-primary: #005cbb;
+  --md-on-primary: #fff;
+  --md-surface: #fdfcff;
+  --md-surface-container: #eef0f5;
+  --md-on-surface: #1a1c1e;
+  --md-on-surface-variant: #43474e;
+  --md-outline: #c4c6d0;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --md-primary: #adc6ff;
+    --md-on-primary: #002e69;
+    --md-surface: #1a1c1e;
+    --md-surface-container: #1f2124;
+    --md-on-surface: #e3e2e6;
+    --md-on-surface-variant: #c4c6d0;
+    --md-outline: #43474e;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--md-surface);
+  color: var(--md-on-surface);
+  font: 400 14px/1.5 Roboto, system-ui, sans-serif;
+}
+
+/* --- top app bar ------------------------------------------------------- */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 64px;
+  padding: 0 16px;
+  background: var(--md-surface-container);
+  box-shadow: 0 1px 3px #0003;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.bar h1 {
+  font: 500 20px/28px Roboto, system-ui, sans-serif;
+  margin: 0 8px 0 0;
+  white-space: nowrap;
+}
+
+.bar .spacer { flex: 1; }
+
+.bar .doc-name {
+  color: var(--md-on-surface-variant);
+  font-family: 'Roboto Mono', ui-monospace, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--md-outline);
+  border-radius: 4px;
+  padding: 8px 12px;
+  max-width: 40ch;
+}
+
+button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
+button:disabled { opacity: .38; cursor: default; }
+button svg { width: 24px; height: 24px; fill: currentColor; }
+
+/* a labelled button, for the one action worth spelling out */
+button.filled {
+  width: auto;
+  padding: 0 24px;
+  border-radius: 20px;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  font: 500 14px/20px Roboto, system-ui, sans-serif;
+  letter-spacing: .1px;
+  white-space: nowrap;
+}
+
+button.filled:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--md-on-primary) 8%, var(--md-primary));
+  box-shadow: 0 1px 3px #0003;
+}
+
+/* --- plugin host ------------------------------------------------------- */
+
+.plugin {
+  padding: 16px;
+
+  /* the theme OpenSCD core promises its plugins — see the theming guide at
+     https://github.com/openscd/oscd-api/blob/main/docs/theming.md */
+  --oscd-primary: var(--oscd-theme-primary, #2aa198);
+  --oscd-secondary: var(--oscd-theme-secondary, #6c71c4);
+  --oscd-error: var(--oscd-theme-error, #dc322f);
+  --oscd-base03: var(--oscd-theme-base03, #002b36);
+  --oscd-base02: var(--oscd-theme-base02, #073642);
+  --oscd-base01: var(--oscd-theme-base01, #586e75);
+  --oscd-base00: var(--oscd-theme-base00, #657b83);
+  --oscd-base0: var(--oscd-theme-base0, #839496);
+  --oscd-base1: var(--oscd-theme-base1, #93a1a1);
+  --oscd-base2: var(--oscd-theme-base2, #eee8d5);
+  --oscd-base3: var(--oscd-theme-base3, #fdf6e3);
+  --oscd-shape: var(--oscd-theme-shape, 8px);
+  --oscd-text-font: var(--oscd-theme-text-font, 'Roboto');
+  --oscd-text-font-mono: var(--oscd-theme-text-font-mono, 'Roboto Mono');
+  --oscd-icon-font: var(--oscd-theme-icon-font, 'Material Icons');
+}
+
+.hint {
+  padding: 16px;
+  color: var(--md-on-surface-variant);
+}

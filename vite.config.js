@@ -1,4 +1,4 @@
-import { existsSync, globSync } from 'node:fs';
+import { existsSync, globSync, rmSync, writeFileSync } from 'node:fs';
 import { relative, resolve } from 'node:path';
 
 import { defineConfig } from 'vite';
@@ -56,14 +56,29 @@ const indexHtml = urls => `<!doctype html>
 `;
 
 /** Every module under `src/plugins/` is a plugin, and gets its own bundle. */
-const input = Object.fromEntries(
-  globSync('src/plugins/**/*.{js,ts}', { cwd: root, exclude: isTest }).map(file => [
-    file.replace(/^src\//, '').replace(/\.[jt]s$/, ''),
-    resolve(root, file),
+const plugins = globSync('src/plugins/**/*.{js,ts}', { cwd: root, exclude: isTest })
+  .sort()
+  .map((file, i) => ({
+    name: file.replace(/^src\//, '').replace(/\.[jt]s$/, ''),
+    file: resolve(root, file),
+    environment: `plugin${i}`, // environment names may only be [\w$]
+  }));
+
+/**
+ * One build environment per plugin. A build with several inputs moves code
+ * they share into a chunk of its own, but OpenSCD loads a plugin from a single
+ * URL, so each plugin is built alone and bundles everything it imports.
+ */
+const environments = Object.fromEntries(
+  plugins.map(({ name, file, environment }) => [
+    environment,
+    { consumer: 'client', build: { rolldownOptions: { input: { [name]: file } } } },
   ]),
 );
 
-export default defineConfig({
+const outDir = resolve(root, 'dist');
+
+export default defineConfig(({ command }) => ({
   plugins: [
     {
       name: 'oscd-plugins',
@@ -77,18 +92,6 @@ export default defineConfig({
             if (source) req.url = query ? `${source}?${query}` : source;
           }
           next();
-        });
-      },
-
-      generateBundle(_options, bundle) {
-        const urls = Object.values(bundle)
-          .filter(chunk => chunk.isEntry)
-          .map(chunk => chunk.fileName)
-          .sort();
-        this.emitFile({
-          type: 'asset',
-          fileName: 'index.html',
-          source: indexHtml(urls),
         });
       },
 
@@ -108,13 +111,40 @@ export default defineConfig({
   server: { cors: true },
   preview: { cors: true },
 
+  // The plugin environments are only needed to build, the dev server serves
+  // every plugin from source anyway.
+  environments: command === 'build' ? environments : {},
+
+  builder: {
+    async buildApp(builder) {
+      rmSync(outDir, { recursive: true, force: true });
+      for (const { name, environment } of plugins) {
+        const [{ output }] = [await builder.build(builder.environments[environment])].flat();
+        // A second file (a CSS file, an image, …) would be one the plugin
+        // can't find once it is loaded on its own.
+        if (output.length > 1)
+          throw new Error(
+            `${name} is not self-contained, it also emits ` +
+              output.slice(1).map(file => file.fileName).join(', '),
+          );
+      }
+      writeFileSync(
+        resolve(outDir, 'index.html'),
+        indexHtml(plugins.map(({ name }) => `${name}.js`)),
+      );
+    },
+  },
+
   build: {
-    rollupOptions: {
+    outDir,
+    // Each plugin's build writes into the same `dist/`, so `buildApp` empties
+    // it once, before the first one.
+    emptyOutDir: false,
+    rolldownOptions: {
       // Plugins are consumed as ES modules by OpenSCD, so the default export
       // must survive tree-shaking.
       preserveEntrySignatures: 'strict',
-      input,
-      output: { entryFileNames: '[name].js', chunkFileNames: 'plugins/shared/[name]-[hash].js' },
+      output: { entryFileNames: '[name].js', codeSplitting: false },
     },
   },
-});
+}));

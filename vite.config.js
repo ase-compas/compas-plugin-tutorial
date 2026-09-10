@@ -33,7 +33,7 @@ const indexHtml = urls => `<!doctype html>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>OpenSCD plugins</title>
+    <title>CoMPAS plugins</title>
     <style>
       body { margin: 0 auto; padding: 2rem 1rem; max-width: 46rem;
              font: 16px/1.6 system-ui, sans-serif; color-scheme: light dark; }
@@ -42,8 +42,8 @@ const indexHtml = urls => `<!doctype html>
     </style>
   </head>
   <body>
-    <h1>OpenSCD plugins</h1>
-    <p>Add any of these URLs to OpenSCD as a custom plugin:</p>
+    <h1>CoMPAS plugins</h1>
+    <p>Add any of these URLs to CoMPAS as a custom plugin:</p>
     <ul>
       ${urls.map(url => `<li><code>${url}</code></li>`).join('\n      ')}
     </ul>

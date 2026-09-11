@@ -59,7 +59,9 @@ body {
   white-space: nowrap;
 }
 
-select {
+/* Scoped to the bar, so the plugin below gets the browser's default controls,
+   as it does in OpenSCD. */
+.bar select {
   font: inherit;
   color: inherit;
   background: transparent;
@@ -69,7 +71,7 @@ select {
   max-width: 40ch;
 }
 
-button {
+.bar button {
   display: grid;
   place-items: center;
   width: 40px;
@@ -82,12 +84,12 @@ button {
   cursor: pointer;
 }
 
-button:hover:not(:disabled) { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
-button:disabled { opacity: .38; cursor: default; }
-button svg { width: 24px; height: 24px; fill: currentColor; }
+.bar button:hover:not(:disabled) { background: color-mix(in srgb, var(--md-on-surface) 8%, transparent); }
+.bar button:disabled { opacity: .38; cursor: default; }
+.bar button svg { width: 24px; height: 24px; fill: currentColor; }
 
 /* a labelled button, for the one action worth spelling out */
-button.filled {
+.bar button.filled {
   width: auto;
   padding: 0 24px;
   border-radius: 20px;
@@ -98,7 +100,7 @@ button.filled {
   white-space: nowrap;
 }
 
-button.filled:hover:not(:disabled) {
+.bar button.filled:hover:not(:disabled) {
   background: color-mix(in srgb, var(--md-on-primary) 8%, var(--md-primary));
   box-shadow: 0 1px 3px #0003;
 }

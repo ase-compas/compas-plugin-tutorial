@@ -3,6 +3,11 @@ import { newEditEventV2 } from "@openscd/oscd-api/utils.js";
 
 export default class MyFirstPlugin extends HTMLElement {
   #doc?: XMLDocument;
+  
+  connectedCallback() {
+    this.render();
+  }
+
 
   set doc(doc: XMLDocument) {
     this.#doc = doc;

@@ -1,0 +1,5 @@
+function e(e,t){return new CustomEvent(`oscd-edit-v2`,{composed:!0,bubbles:!0,detail:{...t,edit:e}})}var t=class extends HTMLElement{#e;set doc(e){this.#e=e,this.render()}set editCount(e){this.render()}resetBays(t){let n=this.#e.createElementNS(`http://www.iec.ch/61850/2003/SCL`,`Bay`);n.setAttribute(`name`,`Bay 1`);let r=[...[...t.querySelectorAll(`Bay`)].map(e=>({node:e})),{parent:t,node:n,reference:null},{element:t,attributes:{desc:`Reset by the tutorial`},attributesNS:{}}];this.dispatchEvent(e(r,{title:`Reset bays in ${t.getAttribute(`name`)}`}))}render(){let e=[...this.#e?.querySelectorAll(`VoltageLevel`)??[]];if(!e.length){this.innerHTML=`<p>Open a document with a VoltageLevel.</p>`;return}this.innerHTML=e.map(e=>`
+        <h3>${e.getAttribute(`name`)}
+          <small>${e.getAttribute(`desc`)??``}</small></h3>
+        <ol>${[...e.querySelectorAll(`Bay`)].map(e=>`<li>${e.getAttribute(`name`)}</li>`).join(``)}</ol>
+        <button>Reset bays</button>`).join(``),this.querySelectorAll(`button`).forEach((t,n)=>{t.onclick=()=>this.resetBays(e[n])})}};export{t as default};

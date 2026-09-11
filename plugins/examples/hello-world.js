@@ -1,0 +1,1 @@
+var e=class extends HTMLElement{connectedCallback(){this.innerHTML=`<p>Hello, world!</p>`}};export{e as default};

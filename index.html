@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CoMPAS plugins</title>
+    <style>
+      body { margin: 0 auto; padding: 2rem 1rem; max-width: 46rem;
+             font: 16px/1.6 system-ui, sans-serif; color-scheme: light dark; }
+      li { margin: .4rem 0; }
+      code { font-size: .85em; overflow-wrap: anywhere; }
+    </style>
+  </head>
+  <body>
+    <h1>CoMPAS plugins</h1>
+    <p>Add any of these URLs to CoMPAS as a custom plugin:</p>
+    <ul>
+      <li><code>plugins/examples/hello-world.js</code></li>
+      <li><code>plugins/examples/list-ieds.js</code></li>
+      <li><code>plugins/presentation/01-MyFirstPlugin.js</code></li>
+      <li><code>plugins/presentation/02-MyFirstPlugin.js</code></li>
+      <li><code>plugins/presentation/03-MyFirstPlugin.js</code></li>
+      <li><code>plugins/tutorial/01-hello-world.js</code></li>
+      <li><code>plugins/tutorial/02-properties.js</code></li>
+      <li><code>plugins/tutorial/03-set-attributes.js</code></li>
+      <li><code>plugins/tutorial/04-insert.js</code></li>
+      <li><code>plugins/tutorial/05-remove.js</code></li>
+      <li><code>plugins/tutorial/06-complex-edits.js</code></li>
+    </ul>
+    <script>
+      for (const el of document.querySelectorAll('code'))
+        el.textContent = new URL(el.textContent, location.href).href;
+    </script>
+  </body>
+</html>

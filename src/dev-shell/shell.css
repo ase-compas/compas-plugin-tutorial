@@ -59,8 +59,6 @@ body {
   white-space: nowrap;
 }
 
-/* Scoped to the bar, so the plugin below gets the browser's default controls,
-   as it does in OpenSCD. */
 .bar select {
   font: inherit;
   color: inherit;

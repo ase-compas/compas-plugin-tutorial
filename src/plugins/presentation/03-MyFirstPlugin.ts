@@ -36,6 +36,35 @@ export default class MyFirstPlugin extends HTMLElement {
   }
 
 
+  promptRename(ied: Element) {
+    // Ask for a new name in a browser dialog and rename the IED
+    const newName = prompt('New IED name:', ied.getAttribute('name') ?? '');
+    if (newName) this.renameIed(ied, newName);
+  }
+
+  renderButton(label: string, onClick: () => void) {
+    const button = document.createElement('button');
+    button.textContent = label;
+    button.addEventListener('click', onClick);
+    return button;
+  }
+
+  renderIed(ied: Element) {
+    const item = document.createElement('li');
+    item.append(
+      `${ied.getAttribute('name')} `,
+      this.renderButton('Rename', () => this.promptRename(ied)),
+      this.renderButton('Remove', () => this.removeIed(ied)),
+    );
+    return item;
+  }
+
+  renderIedList(ieds: Element[]) {
+    const list = document.createElement('ul');
+    list.append(...ieds.map((ied) => this.renderIed(ied)));
+    return list;
+  }
+
   render() {
     if (!this.#doc) {
       this.innerHTML = `<h1>No document provided.</h1>`;
@@ -43,27 +72,6 @@ export default class MyFirstPlugin extends HTMLElement {
     }
 
     const ieds = Array.from(this.#doc.querySelectorAll('IED'));
-
-    this.innerHTML = `<ul>${ieds
-      .map((ied, i) => `<li>${ied.getAttribute('name')}
-        <button data-action="rename" data-index="${i}">Rename</button>
-        <button data-action="remove" data-index="${i}">Remove</button>
-      </li>`)
-      .join('')}</ul>`;
-
-    this.querySelectorAll('button').forEach((button) => {
-      button.addEventListener('click', () => {
-        const ied = ieds[Number(button.dataset.index)];
-
-        if (button.dataset.action === 'remove') {
-          this.removeIed(ied);
-          return;
-        }
-
-        // Ask for a new name in a browser dialog and rename the IED
-        const newName = prompt('New IED name:', ied.getAttribute('name') ?? '');
-        if (newName) this.renameIed(ied, newName);
-      });
-    });
+    this.replaceChildren(this.renderIedList(ieds));
   }
 }

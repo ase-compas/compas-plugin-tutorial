@@ -1,3 +1,4 @@
+/** Read doc and editCount */
 export default class MyFirstPlugin extends HTMLElement {
   #doc?: XMLDocument;
 

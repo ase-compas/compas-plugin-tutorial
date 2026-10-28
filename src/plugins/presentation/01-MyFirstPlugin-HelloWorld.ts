@@ -1,4 +1,5 @@
 
+/** Hello World */
 export default class MyFirstPlugin extends HTMLElement {
 
     connectedCallback() {

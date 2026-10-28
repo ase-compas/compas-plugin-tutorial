@@ -1,6 +1,7 @@
 import type { Remove, SetAttributes } from "@openscd/oscd-api";
 import { newEditEventV2 } from "@openscd/oscd-api/utils.js";
 
+/** Edit API Edit IED */
 export default class MyFirstPlugin extends HTMLElement {
   #doc?: XMLDocument;
   

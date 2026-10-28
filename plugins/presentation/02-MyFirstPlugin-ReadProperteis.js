@@ -1,0 +1,1 @@
+var e=class extends HTMLElement{#e;set doc(e){this.#e=e,this.render()}set editCount(e){this.render()}render(){if(!this.#e){this.innerHTML=`<h1>No document provided.</h1>`;return}let e=Array.from(this.#e.querySelectorAll(`IED`));this.innerHTML=`<ul>${e.map(e=>`<li>${e.getAttribute(`name`)}</li>`).join(``)}</ul>`}};export{e as default};
